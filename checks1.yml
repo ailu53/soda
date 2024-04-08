@@ -1,0 +1,11 @@
+checks for soda cloud:
+  - group evolution:
+      name: checks_group_evolution
+      fail:
+        when groups change:
+          - group delete
+      query: |
+        SELECT
+            checks
+        FROM soda cloud
+        GROUP BY checks

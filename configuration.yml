@@ -1,0 +1,22 @@
+ data_source trainingsqlpl:
+   type: sqlserver
+   host: tcp:vijaytraining.sql.azuresynapse.net
+   port: '1433'
+   username: sqladminuser
+   password: ${synapse_password}
+   database: trainingsqlpl
+   schema: soda
+   driver: ODBC Driver 18 for SQL Server
+ data_source customer:
+   type: mysql
+   host: localhost
+   username: root
+   password: vijay98765
+   database: mysql
+   schema: customer
+
+
+ soda_cloud:
+   host: cloud.soda.io
+   api_key_id: ${api_key_id}
+   api_key_secret: ${api_key_secret}

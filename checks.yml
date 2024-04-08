@@ -1,0 +1,81 @@
+checks for customer:
+
+  # Ensure there are no duplicate customerid in the dataset.
+  - duplicate_count(customerid) = 0:
+      name: No duplicate customerid
+
+  # Verify that there are no missing values in the 'customerid' column.
+  - missing_count(customerid) = 0:
+      name: There are no missing customerid values
+
+  # Ensure there are no duplicate phone numbers in the dataset.
+  - duplicate_count(phone) = 0:
+      name: No duplicate phone numbers
+
+  # Confirm there are no missing phone numbers in the dataset.
+  - missing_count(phone) = 0:
+      name: There are no missing phone values
+
+  # Verify phone numbers are in a valid format.
+  - invalid_count(phone) = 0:
+      valid format: phone number
+      name: Invalid phone number
+
+  # Verify that there are no missing values in the 'Bank Account Number' column.
+  - missing_count(bank_account_number) = 0:
+      name: There are no missing bank account number values
+
+  # Ensure there are no missing values in the 'credit_card_number' column.
+  - missing_count(credit_card_number) = 0:
+      name: There are no missing credit_card_number values
+
+  # Check for expired credit cards by comparing the expiration date to the current date.
+  - Valid_Credit_card_Expiry = 0:
+      name: Credit card expired
+      Valid_Credit_card_Expiry query: |
+          SELECT count(*) FROM soda.cust 
+          WHERE [credit_card_expiration_date] < sysdatetime()
+
+  # Check for expired credit cards in coming 60 days.
+  - Valid_Credit_card_Expiry_in_60d:
+      warn: when > 0
+      name: Credit card will expire in 60d
+      Valid_Credit_card_Expiry_in_60d query: |
+          SELECT count(*) FROM soda.cust 
+          WHERE datediff(DAy,sysdatetime(),[credit_card_expiration_date]) between 0 and 60
+
+  # Confirm there are no missing birth date in the dataset.
+  - missing_count(birth_date) = 0:
+      name: There are no missing birth_date values
+
+  # Validate dates of birth to ensure they are not in the future.
+  - Valid_DOB = 0:
+      name: Valid DOB
+      Valid_DOB query: |
+          SELECT count(*) FROM soda.cust 
+          WHERE birth_date > sysdatetime()
+
+  # Ensure email addresses are in a valid format.
+  - invalid_count(email) = 0:
+      valid regex: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+      name: Invalid email
+
+  # Check IP addresses for validity, with a warning if more than 0.05% are invalid.
+  - invalid_count(ip_address):
+      valid format: ip address
+      warn: when > 0.05%
+      name: Invalid ip address
+
+  # Check for accepted gender values.
+  - invalid_count(gender) = 0:
+      valid values: ["Male", "Female", "Bigender"]
+      name: Invalid gender
+
+  # Check for children's count greater than 4.
+  - failed rows:
+      fail condition: children > 4
+      name: Children greater than 4
+
+  # Check that the dataset contains at least one row, ensuring it's not empty.
+  - row_count > 0:
+      name: Total number of customers
